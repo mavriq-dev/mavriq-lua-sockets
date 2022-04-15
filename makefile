@@ -18,7 +18,7 @@ PLAT?=linux
 
 # LUAV: 5.1 5.2 5.3 5.4
 # lua version to build against
-LUAV?=5.1
+LUAV?=5.3
 
 # MYCFLAGS: to be set by user if needed
 MYCFLAGS?=
@@ -163,7 +163,7 @@ O_macosx=o
 CC_macosx=gcc
 DEF_macosx= -DLUASOCKET_$(DEBUG) -DUNIX_HAS_SUN_LEN
 CFLAGS_macosx=$(LUAINC:%=-I%) $(DEF) -Wall -O2 -fno-common
-LDFLAGS_macosx= -llua -bundle -o #-undefined dynamic_lookup  -o 
+LDFLAGS_macosx= -llua -bundle -o #-bundle -undefined dynamic_lookup  -o 
 LD_macosx=gcc
 SOCKET_macosx=usocket.o
 
@@ -274,7 +274,7 @@ SO=$(SO_$(PLAT))
 O=$(O_$(PLAT))
 SOCKET_V=3.0.0
 MIME_V=1.0.3
-SOCKET_SO=core.$(SO)
+SOCKET_SO=core.$(SO)  #socket-$(SOCKET_V).$(SO)
 MIME_SO=mime-$(MIME_V).$(SO)
 UNIX_SO=unix.$(SO)
 SERIAL_SO=serial.$(SO)
