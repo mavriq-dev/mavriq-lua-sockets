@@ -1,0 +1,7 @@
+wget https://www.lua.org/ftp/lua-5.3.6.tar.gz
+tar -xvf lua-5.3.6.tar.gz 
+cd lua-5.3.6/src/
+sed -i '/MYCFLAGS=/ !b; s/$/ -fPIC/' Makefile
+sed -i '/MYLDFLAGS=/ !b; s/$/ -fPIC/' Makefile
+make linux
+
