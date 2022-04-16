@@ -1,0 +1,57 @@
+name: Build 
+
+on:
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+  
+jobs:
+  build_linux:
+  
+    strategy:
+      matrix:
+          targetplatform: [x64]
+
+    runs-on:  ubuntu-20.04
+
+
+    steps:
+      - name: Build Lua Lib
+        run: |
+          wget https://www.lua.org/ftp/lua-5.3.6.tar.gz
+          tar -xvf lua-5.3.6.tar.gz 
+          cd lua-5.3.6/src/
+          sed -i '/MYCFLAGS=/ !b; s/$/ -fPIC/' Makefile
+          sed -i '/MYLDFLAGS=/ !b; s/$/ -fPIC/' Makefile
+          make linux
+          cd -
+          pwd
+
+      - name: Build luasockets
+        run: |
+          git clone https://github.com/lunarmodules/luasocket --depth 1
+          cd luasocket/src/
+          cp ../../lua-5.3.6/src/liblua.a .
+          cp ../../lua-5.3.6/src/lua.h .
+          cp ../../lua-5.3.6/src/luaconf.h .
+          cp ../../lua-5.3.6/src/lauxlib.h .
+          perl -0777 -i.original -pe 's/LUAV\?=5\.1/LUAV?=5.3/' makefile
+          perl -0777 -i.original -pe 's/CFLAGS_linux=\$\(LUAINC:%=-I%\) \$\(DEF\) -Wall -Wshadow -Wextra.*\\\n.*-Wimplicit -O2 -ggdb3 -fpic/CFLAGS_linux=\$\(LUAINC:%=-I%\) \$\(DEF\) -Wall -Wshadow -Wextra \\\n\t-Wimplicit -O2 -fPIC/' makefile
+          perl -0777 -i.original -pe 's/LDFLAGS_linux=-O -shared -fpic -o/LDFLAGS_linux=-O -Wl,-Bstatic -L. -llua -Wl,-Bdynamic -shared -fPIC -o/' makefile
+          perl -0777 -i.original -pe 's/SOCKET_SO=socket-\$\(SOCKET_V\)\.\$\(SO\)/SOCKET_SO=core\.\$\(SO\) /' makefile
+          make linux
+
+      - name: Archive files
+        run: |
+          pwd
+          mkdir archive
+          mkdir archive/socket
+          cp luasocket/src/core.so archive/socket
+          cp luasocket/src/*.lua archive
+        # cd archive
+        # tar -czvf mavriq-lua-sockets.tar.gz *.* socket
+      
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: mavriq-lua-sockts(linux)
+          path: archive
