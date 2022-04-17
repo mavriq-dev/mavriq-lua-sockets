@@ -29,3 +29,4 @@ CFLAGS_linux=$(LUAINC:%=-I%) $(DEF) -Wall -Wshadow -Wextra \
 #LDFLAGS_linux=-O -shared -fpic -o
 LDFLAGS_linux= -O -Wl,-Bstatic -L. -llua -Wl,-Bdynamic -shared -fPIC  -o
 ```
+no point in code signing mac code. Unless it is signed by the same team as REAPER you will still get a security warning. Might as well leave unsigned. The code to sign is comment out in the github action.

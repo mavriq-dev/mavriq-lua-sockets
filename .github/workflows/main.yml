@@ -6,13 +6,8 @@ on:
   
 jobs:
   build_linux:
-  
-    strategy:
-      matrix:
-          targetplatform: [x64]
 
     runs-on:  ubuntu-20.04
-
 
     steps:
       - name: Build Lua Lib
@@ -24,7 +19,6 @@ jobs:
           sed -i '/MYLDFLAGS=/ !b; s/$/ -fPIC/' Makefile
           make linux
           cd -
-          pwd
 
       - name: Build luasockets
         run: |
@@ -40,18 +34,70 @@ jobs:
           perl -0777 -i.original -pe 's/SOCKET_SO=socket-\$\(SOCKET_V\)\.\$\(SO\)/SOCKET_SO=core\.\$\(SO\) /' makefile
           make linux
 
-      - name: Archive files
+      - name: collect files
         run: |
-          pwd
           mkdir archive
           mkdir archive/socket
           cp luasocket/src/core.so archive/socket
           cp luasocket/src/*.lua archive
-        # cd archive
-        # tar -czvf mavriq-lua-sockets.tar.gz *.* socket
       
-      - name: Upload artifacts
+      - name: Upload linux artifacts
         uses: actions/upload-artifact@v2
         with:
           name: mavriq-lua-sockts(linux)
           path: archive
+
+
+  build_macos:
+
+    runs-on:  macos-latest
+
+    steps:
+      - name: Build Lua Lib
+        run: |
+          wget https://www.lua.org/ftp/lua-5.3.6.tar.gz
+          tar -xvf lua-5.3.6.tar.gz 
+          cd lua-5.3.6/src/
+          make macosx
+          cd -
+
+      - name: Build luasockets
+        run: |
+          git clone https://github.com/lunarmodules/luasocket --depth 1
+          cd luasocket/src/
+          cp ../../lua-5.3.6/src/liblua.a .
+          cp ../../lua-5.3.6/src/lua.h .
+          cp ../../lua-5.3.6/src/luaconf.h .
+          cp ../../lua-5.3.6/src/lauxlib.h .
+          perl -0777 -i.original -pe 's/LUAV\?=5\.1/LUAV?=5.3/' makefile
+          perl -0777 -i.original -pe 's/LDFLAGS_macosx= -bundle -undefined dynamic_lookup -o.*/LDFLAGS_macosx= -L. -llua -bundle -o /' makefile
+          perl -0777 -i.original -pe 's/SOCKET_SO=socket-\$\(SOCKET_V\)\.\$\(SO\)/SOCKET_SO=core\.\$\(SO\) /' makefile
+          make macosx
+
+#      - name: Codesign executable
+#        env: 
+#          MACOS_CERTIFICATE: ${{ secrets.MACOS_CERTIFICATE }}
+#          MACOS_CERTIFICATE_PWD: ${{ secrets.MACOS_CERTIFICATE_PWD }}
+#        run: |
+#          echo $MACOS_CERTIFICATE | base64 --decode > certificate.p12
+#          security create-keychain -p abcd1234 build.keychain
+#          security default-keychain -s build.keychain
+#          security unlock-keychain -p abcd1234 build.keychain
+#          security import certificate.p12 -k build.keychain -P $MACOS_CERTIFICATE_PWD -T /usr/bin/codesign
+#          security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k abcd1234 build.keychain
+#          /usr/bin/codesign --force -s "Developer ID Application: Geoff Van Brunt (45VRR5GY44)" luasocket/src/core.so -v
+
+      - name: Archive files
+        run: |
+          mkdir archive
+          mkdir archive/socket
+          cp luasocket/src/core.so archive/socket
+          cp luasocket/src/*.lua archive
+      
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: mavriq-lua-sockts(mac)
+          path: archive
+
+                
