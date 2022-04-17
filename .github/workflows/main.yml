@@ -50,7 +50,7 @@ jobs:
 
   build_macos:
 
-    runs-on:  macos-latest
+    runs-on:  macos-11
 
     steps:
       - name: Build Lua Lib
@@ -87,17 +87,56 @@ jobs:
 #          security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k abcd1234 build.keychain
 #          /usr/bin/codesign --force -s "Developer ID Application: Geoff Van Brunt (45VRR5GY44)" luasocket/src/core.so -v
 
-      - name: Archive files
+      - name: Collect files
         run: |
           mkdir archive
           mkdir archive/socket
           cp luasocket/src/core.so archive/socket
           cp luasocket/src/*.lua archive
       
-      - name: Upload artifacts
+      - name: Upload mac artifacts
         uses: actions/upload-artifact@v2
         with:
           name: mavriq-lua-sockts(mac)
           path: archive
 
-                
+
+  build_windows:
+
+    runs-on:  windows-2022
+
+    steps:
+
+      - name: Build luasockets
+        run: |
+          curl -sSL -o lua.zip https://sourceforge.net/projects/luabinaries/files/5.3.6/Windows%20Libraries/Static/lua-5.3.6_Win64_vc16_lib.zip
+          7z.exe x lua.zip -olua
+          git clone https://github.com/lunarmodules/luasocket --depth 1
+          cd luasocket/
+          cp ../lua/lua53.lib .
+          cd src/
+          cp ../../lua/include/lua.h .
+          cp ../../lua/include/luaconf.h .
+          cp ../../lua/include/lauxlib.h .
+          cd ..
+
+      - name: Setup MSBuild path
+        uses: microsoft/setup-msbuild@v1.1
+
+      - name: Build
+        run: |
+          cd luasocket
+          msbuild socket.vcxproj  /p:Configuration=Release /p:Platform=x64 /property:AdditionalDependencies=lua53.lib /property:WindowsTargetPlatformVersion=10.0.19041.0
+
+      - name: Collect files
+        run: |
+          mkdir archive
+          mkdir archive/socket
+          cp luasocket/x64/release/socket/core.dll archive/socket
+          cp luasocket/src/*.lua archive
+      
+      - name: Upload windows artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: mavriq-lua-sockts(win)
+          path: archive
