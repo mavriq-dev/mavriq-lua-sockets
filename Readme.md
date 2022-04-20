@@ -1,3 +1,9 @@
+![License](https://img.shields.io/github/license/mavriq-dev/mavriq-lua-sockets)
+![Relase Build](https://img.shields.io/github/workflow/status/mavriq-dev/mavriq-lua-sockets/Build?label=Build)
+![Code Size](https://img.shields.io/github/languages/code-size/mavriq-dev/mavriq-lua-sockets)
+![Repo Size](https://img.shields.io/github/repo-size/mavriq-dev/mavriq-lua-sockets)
+![Release Ver](https://img.shields.io/github/v/release/mavriq-dev/mavriq-lua-sockets)
+![Prerelase Ver](https://img.shields.io/github/v/release/mavriq-dev/mavriq-lua-sockets?include_prereleases)
 # Mavirq Lua Sockets
 
 ### Background
