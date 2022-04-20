@@ -1,4 +1,4 @@
-![License](https://img.shields.io/github/license/mavriq-dev/mavriq-lua-sockets)
+[![License](https://img.shields.io/badge/license-GPLv3-orange)](./LICENSE)
 ![Relase Build](https://img.shields.io/github/workflow/status/mavriq-dev/mavriq-lua-sockets/Build?label=Build)
 ![Code Size](https://img.shields.io/github/languages/code-size/mavriq-dev/mavriq-lua-sockets)
 ![Repo Size](https://img.shields.io/github/repo-size/mavriq-dev/mavriq-lua-sockets)
