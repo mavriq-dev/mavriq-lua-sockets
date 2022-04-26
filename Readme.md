@@ -28,7 +28,7 @@ Until the REAPER devs fix this, we have to work around the issue. This project d
 To fix the missing library we need to build a version of sockets with the Lua library statically linked. This will "override" the version of Lua built into reaper. All Lua calls by the sockets library will use the statically linked version.
 
 ### Binaries
-You can find builds under releases on GitHub, or you can install via ReaPack (soon available).
+You can find builds under releases on GitHub, or you can install via [ReaPack](https://github.com/mavriq-dev/public-reascripts/raw/master/index.xml).
 
 ### Secret Sauce:
 Each platform has it's own quirks in making a library. In addition I wanted to come up with a solution that could be built entirely from the command line so it could be automated. You can find the workflow YAML under the `Actions` tab in `GitHub` for the project. These are NOT step by step instructions but a how to for the general concept.
