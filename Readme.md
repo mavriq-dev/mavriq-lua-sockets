@@ -11,6 +11,10 @@ Reaper is missing Lua Auxlib in it's embedded version of Lua. As such things suc
 
 Until the REAPER devs fix this, we have to work around the issue. This project does that for all all three REAPER platforms.
 
+So far I have built the Lua ZeroBrane Debugging based on this package. Mavriq LuaSockets comes with support for raw, UDP, SMTP, FTP and HTTP. Sorry HTTPS isn't available yet, but there is a sister package I will soon incorporate.
+
+Danial Lumertz has an excellent thread [here](https://forums.cockos.com/showthread.php?t=265870) with example how to use it.
+
 ### Note to REAPER Devs
 
 **This may be a one line fix depending on how Lua was added to Reaper.** Typically Lua is embedded by including the headers like the code below. If so the header for `lauxlib.h` is missing.
