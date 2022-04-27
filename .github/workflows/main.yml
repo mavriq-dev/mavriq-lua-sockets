@@ -58,8 +58,8 @@ jobs:
           wget https://www.lua.org/ftp/lua-5.3.6.tar.gz
           tar -xvf lua-5.3.6.tar.gz 
           cd lua-5.3.6/src/
-          perl -0777 -i.original -pe 's/MYCFLAGS=/MYCFLAGS= -mmacosx-version-min=10.9/' makefile
-          perl -0777 -i.original -pe 's/MYLDFLAGS=/MYLDFLAGS= -mmacosx-version-min=10.9/' makefile
+          perl -0777 -i.original -pe 's/MYCFLAGS=/MYCFLAGS= -mmacosx-version-min=10.9 -arch arm64 -arch x86_64/' makefile
+          perl -0777 -i.original -pe 's/MYLDFLAGS=/MYLDFLAGS= -mmacosx-version-min=10.9 -arch arm64 -arch x86_64/' makefile
           make macosx
           cd -
 
@@ -74,8 +74,8 @@ jobs:
           cp ../../lua-5.3.6/src/lauxlib.h .
 
           perl -0777 -i.original -pe 's/LUAV\?=5\.1/LUAV?=5.3/' makefile
-          perl -0777 -i.original -pe 's/CFLAGS_macosx=\$\(LUAINC:%=-I%\) \$\(DEF\) -Wall -O2 -fno-common.*/CFLAGS_macosx=\$\(LUAINC:%=-I%\) \$\(DEF\) -Wall -Wshadow -Wextra -mmacosx-version-min=10.9/' makefile
-          perl -0777 -i.original -pe 's/LDFLAGS_macosx= -bundle -undefined dynamic_lookup -o.*/LDFLAGS_macosx= -mmacosx-version-min=10.9 -L. -llua -bundle -o /' makefile
+          perl -0777 -i.original -pe 's/CFLAGS_macosx=\$\(LUAINC:%=-I%\) \$\(DEF\) -Wall -O2 -fno-common.*/CFLAGS_macosx=\$\(LUAINC:%=-I%\) \$\(DEF\) -Wall -Wshadow -Wextra -mmacosx-version-min=10.9 -arch arm64 -arch x86_64/' makefile
+          perl -0777 -i.original -pe 's/LDFLAGS_macosx= -bundle -undefined dynamic_lookup -o.*/LDFLAGS_macosx= -mmacosx-version-min=10.9 -arch arm64 -arch x86_64 -L. -llua -bundle -o /' makefile
           perl -0777 -i.original -pe 's/SOCKET_SO=socket-\$\(SOCKET_V\)\.\$\(SO\)/SOCKET_SO=core\.\$\(SO\) /' makefile
           make macosx
 
