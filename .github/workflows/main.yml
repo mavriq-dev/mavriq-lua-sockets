@@ -42,7 +42,7 @@ jobs:
           cp luasocket/src/*.lua archive
       
       - name: Upload linux artifacts
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: mavriq-lua-sockts(linux)
           path: archive
@@ -100,7 +100,7 @@ jobs:
           cp luasocket/src/*.lua archive
       
       - name: Upload mac artifacts
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: mavriq-lua-sockts(mac)
           path: archive
@@ -141,7 +141,7 @@ jobs:
           cp luasocket/src/*.lua archive
       
       - name: Upload windows artifacts
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: mavriq-lua-sockts(win)
           path: archive
