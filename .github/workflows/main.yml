@@ -79,18 +79,18 @@ jobs:
           perl -0777 -i.original -pe 's/SOCKET_SO=socket-\$\(SOCKET_V\)\.\$\(SO\)/SOCKET_SO=core\.\$\(SO\) /' makefile
           make macosx
 
-#      - name: Codesign executable
-#        env: 
-#          MACOS_CERTIFICATE: ${{ secrets.MACOS_CERTIFICATE }}
-#          MACOS_CERTIFICATE_PWD: ${{ secrets.MACOS_CERTIFICATE_PWD }}
-#        run: |
-#          echo $MACOS_CERTIFICATE | base64 --decode > certificate.p12
-#          security create-keychain -p abcd1234 build.keychain
-#          security default-keychain -s build.keychain
-#          security unlock-keychain -p abcd1234 build.keychain
-#          security import certificate.p12 -k build.keychain -P $MACOS_CERTIFICATE_PWD -T /usr/bin/codesign
-#          security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k abcd1234 build.keychain
-#          /usr/bin/codesign --force -s "Developer ID Application: Geoff Van Brunt (45VRR5GY44)" luasocket/src/core.so -v
+     - name: Codesign executable
+       env: 
+         MACOS_CERTIFICATE: ${{ secrets.MACOS_CERTIFICATE }}
+         MACOS_CERTIFICATE_PWD: ${{ secrets.MACOS_CERTIFICATE_PWD }}
+       run: |
+         echo $MACOS_CERTIFICATE | base64 --decode > certificate.p12
+         security create-keychain -p abcd1234 build.keychain
+         security default-keychain -s build.keychain
+         security unlock-keychain -p abcd1234 build.keychain
+         security import certificate.p12 -k build.keychain -P $MACOS_CERTIFICATE_PWD -T /usr/bin/codesign
+         security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k abcd1234 build.keychain
+         /usr/bin/codesign --force -s "Developer ID Application: Geoff Van Brunt (45VRR5GY44)" luasocket/src/core.so -v
 
       - name: Collect files
         run: |
