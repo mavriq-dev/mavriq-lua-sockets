@@ -108,7 +108,7 @@ jobs:
 
   build_windows:
 
-    runs-on:  self-hosted
+    runs-on:  windows-2022
 
     steps:
       - uses: ilammy/msvc-dev-cmd@v1
