@@ -12,9 +12,9 @@ jobs:
     steps:
       - name: Build Lua Lib
         run: |
-          wget https://www.lua.org/ftp/lua-5.3.6.tar.gz
-          tar -xvf lua-5.3.6.tar.gz 
-          cd lua-5.3.6/src/
+          wget https://www.lua.org/ftp/lua-5.4.6.tar.gz
+          tar -xvf lua-5.4.6.tar.gz 
+          cd lua-5.4.6/src/
           sed -i '/MYCFLAGS=/ !b; s/$/ -fPIC/' Makefile
           sed -i '/MYLDFLAGS=/ !b; s/$/ -fPIC/' Makefile
           make linux
@@ -24,11 +24,11 @@ jobs:
         run: |
           git clone https://github.com/lunarmodules/luasocket --depth 1
           cd luasocket/src/
-          cp ../../lua-5.3.6/src/liblua.a .
-          cp ../../lua-5.3.6/src/lua.h .
-          cp ../../lua-5.3.6/src/luaconf.h .
-          cp ../../lua-5.3.6/src/lauxlib.h .
-          perl -0777 -i.original -pe 's/LUAV\?=5\.1/LUAV?=5.3/' makefile
+          cp ../../lua-5.4.6/src/liblua.a .
+          cp ../../lua-5.4.6/src/lua.h .
+          cp ../../lua-5.4.6/src/luaconf.h .
+          cp ../../lua-5.4.6/src/lauxlib.h .
+          perl -0777 -i.original -pe 's/LUAV\?=5\.1/LUAV?=5.4/' makefile
           perl -0777 -i.original -pe 's/CFLAGS_linux=\$\(LUAINC:%=-I%\) \$\(DEF\) -Wall -Wshadow -Wextra.*\\\n.*-Wimplicit -O2 -ggdb3 -fpic/CFLAGS_linux=\$\(LUAINC:%=-I%\) \$\(DEF\) -Wall -Wshadow -Wextra \\\n\t-Wimplicit -O2 -fPIC/' makefile
           perl -0777 -i.original -pe 's/LDFLAGS_linux=-O -shared -fpic -o/LDFLAGS_linux=-O -Wl,-Bstatic -L. -llua -Wl,-Bdynamic -shared -fPIC -o/' makefile
           perl -0777 -i.original -pe 's/SOCKET_SO=socket-\$\(SOCKET_V\)\.\$\(SO\)/SOCKET_SO=core\.\$\(SO\) /' makefile
@@ -55,9 +55,9 @@ jobs:
     steps:
       - name: Build Lua Lib
         run: |
-          wget https://www.lua.org/ftp/lua-5.3.6.tar.gz
-          tar -xvf lua-5.3.6.tar.gz 
-          cd lua-5.3.6/src/
+          wget https://www.lua.org/ftp/lua-5.4.6.tar.gz
+          tar -xvf lua-5.4.6.tar.gz 
+          cd lua-5.4.6/src/
           perl -0777 -i.original -pe 's/MYCFLAGS=/MYCFLAGS= -mmacosx-version-min=10.9 -arch arm64 -arch x86_64/' makefile
           perl -0777 -i.original -pe 's/MYLDFLAGS=/MYLDFLAGS= -mmacosx-version-min=10.9 -arch arm64 -arch x86_64/' makefile
           make macosx
@@ -68,12 +68,12 @@ jobs:
           git clone https://github.com/lunarmodules/luasocket --depth 1
           cd luasocket/src/
 
-          cp ../../lua-5.3.6/src/liblua.a .
-          cp ../../lua-5.3.6/src/lua.h .
-          cp ../../lua-5.3.6/src/luaconf.h .
-          cp ../../lua-5.3.6/src/lauxlib.h .
+          cp ../../lua-5.4.6/src/liblua.a .
+          cp ../../lua-5.4.6/src/lua.h .
+          cp ../../lua-5.4.6/src/luaconf.h .
+          cp ../../lua-5.4.6/src/lauxlib.h .
 
-          perl -0777 -i.original -pe 's/LUAV\?=5\.1/LUAV?=5.3/' makefile
+          perl -0777 -i.original -pe 's/LUAV\?=5\.1/LUAV?=5.4/' makefile
           perl -0777 -i.original -pe 's/CFLAGS_macosx=\$\(LUAINC:%=-I%\) \$\(DEF\) -Wall -O2 -fno-common.*/CFLAGS_macosx=\$\(LUAINC:%=-I%\) \$\(DEF\) -Wall -Wshadow -Wextra -mmacosx-version-min=10.9 -arch arm64 -arch x86_64/' makefile
           perl -0777 -i.original -pe 's/LDFLAGS_macosx= -bundle -undefined dynamic_lookup -o.*/LDFLAGS_macosx= -mmacosx-version-min=10.9 -arch arm64 -arch x86_64 -L. -llua -bundle -o /' makefile
           perl -0777 -i.original -pe 's/SOCKET_SO=socket-\$\(SOCKET_V\)\.\$\(SO\)/SOCKET_SO=core\.\$\(SO\) /' makefile
@@ -111,27 +111,39 @@ jobs:
     runs-on:  windows-2022
 
     steps:
-
-      - name: Build luasockets
+      - uses: ilammy/msvc-dev-cmd@v1
+      - name: Build lua static
         run: |
-          curl -sSL -o lua.zip https://sourceforge.net/projects/luabinaries/files/5.3.6/Windows%20Libraries/Static/lua-5.3.6_Win64_vc16_lib.zip
-          7z.exe x lua.zip -olua
+          curl -sSL -o lua.tar.gz https://www.lua.org/ftp/lua-5.4.6.tar.gz
+          tar -xvf lua.tar.gz 
+          cd lua-5.4.6/src/
+          cl /MD /O2 /c /DLUA_BUILD_AS_DLL *.c
+          ren lua.obj lua.o
+          #ren luac.obj luac.o
+          #link /DLL /IMPLIB:lua5.4.6.lib /OUT:lua5.4.6.dll *.obj
+          #link /OUT:lua.exe lua.o lua5.4.6.lib
+          lib /OUT:lua54.lib *.obj
+          #link /OUT:luac.exe luac.o lua54.lib
+
+      - name: Clone luasockets
+        run: |
           git clone https://github.com/lunarmodules/luasocket --depth 1
           cd luasocket/
-          cp ../lua/lua53.lib .
+          sed -i -e 's/LUAV>5\.3/LUAV>5.4/' lua.props
+          cp ../lua-5.4.6/src/lua54.lib .
           cd src/
-          cp ../../lua/include/lua.h .
-          cp ../../lua/include/luaconf.h .
-          cp ../../lua/include/lauxlib.h .
+          cp ../../lua-5.4.6/src/lua.h .
+          cp ../../lua-5.4.6/src/luaconf.h .
+          cp ../../lua-5.4.6/src/lauxlib.h .
           cd ..
 
       - name: Setup MSBuild path
         uses: microsoft/setup-msbuild@v1.1
 
-      - name: Build
+      - name: Build luasockets
         run: |
           cd luasocket
-          msbuild socket.vcxproj  /p:Configuration=Release /p:Platform=x64 /property:AdditionalDependencies=lua53.lib /property:WindowsTargetPlatformVersion=10.0.19041.0
+          msbuild socket.vcxproj  /p:Configuration=Release /p:Platform=x64 /property:AdditionalDependencies=lua54.lib /property:WindowsTargetPlatformVersion=10.0.19041.0
 
       - name: Collect files
         run: |
