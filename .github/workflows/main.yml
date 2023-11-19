@@ -131,7 +131,6 @@ jobs:
           7z.exe x lua.zip -olua
           git clone https://github.com/lunarmodules/luasocket --depth 1
           cd luasocket/
-          sed -i -e 's/LUAV\>=5\.3/LUAV>=5.4/g' lua.props
           cp ../lua/lua53.lib .
           cd src/
           cp ../../lua/include/lua.h .
@@ -145,7 +144,7 @@ jobs:
       - name: Build
         run: |
           cd luasocket
-
+          sed -i -e 's/LUAV\>=5\.3/LUAV>=5.4/g' lua.props
           msbuild socket.vcxproj  /p:Configuration=Release /p:Platform=x64 /property:AdditionalDependencies=lua53.lib /property:WindowsTargetPlatformVersion=10.0.19041.0
 
       - name: Collect files
