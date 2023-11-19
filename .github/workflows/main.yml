@@ -129,7 +129,7 @@ jobs:
         run: |
           git clone https://github.com/lunarmodules/luasocket --depth 1
           cd luasocket/
-          sed -i -e 's/LUAV>=5\.3/LUAV>=5.4/g' lua.props
+          sed -i -e 's/LUAV>5\.3/LUAV>5.4/' lua.props
           Get-Content -Path .\lua.props
           cp ../lua-5.4.6/src/lua54.lib .
           cd src/
