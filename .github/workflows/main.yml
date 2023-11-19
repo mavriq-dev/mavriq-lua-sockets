@@ -44,7 +44,7 @@ jobs:
       - name: Upload linux artifacts
         uses: actions/upload-artifact@v3
         with:
-          name: mavriq-lua-sockts(linux)
+          name: mavriq-lua-sockets(linux)
           path: archive
 
 
@@ -102,7 +102,7 @@ jobs:
       - name: Upload mac artifacts
         uses: actions/upload-artifact@v3
         with:
-          name: mavriq-lua-sockts(mac)
+          name: mavriq-lua-sockets(mac)
           path: archive
 
 
@@ -155,5 +155,5 @@ jobs:
       - name: Upload windows artifacts
         uses: actions/upload-artifact@v3
         with:
-          name: mavriq-lua-sockts(win)
+          name: mavriq-lua-sockets(win)
           path: archive
