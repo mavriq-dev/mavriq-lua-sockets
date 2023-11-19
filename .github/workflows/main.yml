@@ -131,7 +131,7 @@ jobs:
       - name: Build
         run: |
           cd luasocket
-          perl -0777 -i.original -pe 's/LUAV\>=5\.3/LUAV>=5.4/' lua.props
+          sed -e -e 's/LUAV\>=5\.3/LUAV>=5.4/g' lua.props
           msbuild socket.vcxproj  /p:Configuration=Release /p:Platform=x64 /property:AdditionalDependencies=lua53.lib /property:WindowsTargetPlatformVersion=10.0.19041.0
 
       - name: Collect files
