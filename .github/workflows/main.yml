@@ -127,15 +127,14 @@ jobs:
 
       - name: Build luasockets
         run: |
-          curl -sSL -o lua.zip https://sourceforge.net/projects/luabinaries/files/5.3.6/Windows%20Libraries/Static/lua-5.3.6_Win64_vc16_lib.zip
-          7z.exe x lua.zip -olua
           git clone https://github.com/lunarmodules/luasocket --depth 1
           cd luasocket/
-          cp ../lua/lua53.lib .
+          sed -i -e 's/LUAV\>=5\.3/LUAV>=5.4/g' lua.props
+          cp ../lua-5.4.6/src/lua54.lib .
           cd src/
-          cp ../../lua/include/lua.h .
-          cp ../../lua/include/luaconf.h .
-          cp ../../lua/include/lauxlib.h .
+          cp ../../lua-5.4.6/src/lua.h .
+          cp ../../lua-5.4.6/src/luaconf.h .
+          cp ../../lua-5.4.6/src/lauxlib.h .
           cd ..
 
       - name: Setup MSBuild path
@@ -144,7 +143,6 @@ jobs:
       - name: Build
         run: |
           cd luasocket
-          sed -i -e 's/LUAV\>=5\.3/LUAV>=5.4/g' lua.props
           msbuild socket.vcxproj  /p:Configuration=Release /p:Platform=x64 /property:AdditionalDependencies=lua54.lib /property:WindowsTargetPlatformVersion=10.0.19041.0
 
       - name: Collect files
